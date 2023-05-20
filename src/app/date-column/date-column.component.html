@@ -1,0 +1,29 @@
+<div class="flex flex-col space-y-2">
+    <div>
+        <label for="date-input" class="block">Date</label>
+        <input id="date-input" type="text" (keyup)="handleDateChange($event)" />
+    </div>
+    <div>
+        <label for="dogs-input" class="block">Dogs</label>
+        <input id="dogs-input" type="text" (keyup)="handleDogsChange($event)" />
+    </div>
+    <div>
+        <label for="horses-input" class="block">Horses</label>
+        <input id="horses-input" type="text" (keyup)="handleHorsesChange($event)" />
+    </div>
+    <div>
+        <label for="birds-input" class="block">Birds</label>
+        <input id="birds-input" type="text" (keyup)="handleBirdsChange($event)" />
+    </div>
+    <div>
+        <label for="doubles-input" class="block">Doubles</label>
+        <input id="doubles-input" type="text" (keyup)="handleDoublesChange($event)" />
+    </div>
+    <div>
+        <label for="missing-input" class="block">Missing</label>
+        <input id="missing-input" type="text" (keyup)="handleMissingChange($event)" />
+    </div>
+    <div class="flex justify-center">
+        <button class="mt-2 bg-red-600">Remove Date</button>
+    </div>
+</div>
