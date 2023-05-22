@@ -1,34 +1,45 @@
-import { Component, Input } from "@angular/core";
-import { DateData } from "../datetype";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { DateStrings } from "src/shared/datestrings";
+import { DateDataClass } from "../../shared/datedataclass";
+import { DataService } from "../services/data.service";
 
 @Component({
     selector: "date-column",
-    templateUrl: "./date-column.component.html"
+    templateUrl: "./date-column.component.html",
+    providers: [DataService]
 })
 export class DateColumnComponent {
-    @Input() datedata!: DateData;
+    @Input() key!: number;
+
+    constructor(public dataservice: DataService) {}
 
     handleDateChange = (event: any) => {
-        this.datedata.setDate(event.target.value);
+        console.log("date changed");
+
+        this.dataservice.changeDate(this.key, "date", event.target.value);
     }
 
     handleDogsChange = (event: any) => {
-        this.datedata.setDogs(event.target.value);
+        this.dataservice.changeDate(this.key, "dogs", event.target.value);
     }
 
     handleHorsesChange = (event: any) => {
-        this.datedata.setHorses(event.target.value);
+        this.dataservice.changeDate(this.key, "horses", event.target.value);
     }
 
     handleBirdsChange = (event: any) => {
-        this.datedata.setBirds(event.target.value);
+        this.dataservice.changeDate(this.key, "birds", event.target.value);
     }
 
     handleDoublesChange = (event: any) => {
-        this.datedata.setDoubles(event.target.value);
+        this.dataservice.changeDate(this.key, "doubles", event.target.value);
     }
 
     handleMissingChange = (event: any) => {
-        this.datedata.setMissing(event.target.value);
+        this.dataservice.changeDate(this.key, "missing", event.target.value);
+    }
+
+    handleRemove = () => {
+        this.dataservice.removeDate(this.key);
     }
 }

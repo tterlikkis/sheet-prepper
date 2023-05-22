@@ -1,4 +1,6 @@
-<div class="flex p-6 flex-row space-x-2 items-center">
+<div class="scale-75 flex p-6 flex-row space-x-4 items-center">
   <control-panel class="flex self-end"></control-panel>
-  <date-column></date-column>
+  <div *ngFor="let date of dataservice.dates | keyvalue">
+    <date-column [key]=date.key />
+  </div>
 </div>
