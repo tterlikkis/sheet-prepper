@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { invoke } from "@tauri-apps/api/tauri";
-import { DateData } from "./datetype";
+import { DateData } from "./shared/datetype";
 
 @Component({
   selector: "app-root",
@@ -9,10 +9,48 @@ import { DateData } from "./datetype";
 })
 export class AppComponent {
   greetingMessage = "";
+
   dates: Array<DateData>;
+  start = 1;
+  setStart = (start: typeof this.start) => this.start = start;
+
+  showModal = false;
+  setModal = (showModal: typeof this.showModal) => this.showModal = showModal;
 
   constructor() {
     this.dates = [new DateData()];
+  }
+
+  addDate = () => {
+    this.dates.push(new DateData());
+  }
+
+  removeDate = (index: number) => {
+    this.dates.splice(index, 1);
+  }
+
+  updateDate = (event: any) => {
+    this.dates.splice(event.index, 1, event.data);
+  }
+
+  submit = () => {
+    console.log(this.dates);
+    console.log(this.start);
+
+    let sendDates = new Array();
+    for (let date of this.dates) {
+      sendDates.push(date.toJson());
+    }
+
+    invoke("submit", {start: this.start, data: sendDates});
+  }
+
+  toggleModal = () => {
+    this.setModal(!this.showModal);
+  }
+
+  updateStart = (start: number) => {
+    this.setStart(start);
   }
 
   greet(event: SubmitEvent, name: string): void {

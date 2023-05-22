@@ -7,7 +7,7 @@ import { DateColumnComponent } from './date-column.component';
     DateColumnComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
   ],
   exports: [DateColumnComponent]
 })

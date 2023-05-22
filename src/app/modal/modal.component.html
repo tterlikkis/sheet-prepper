@@ -1,0 +1,14 @@
+<div class="absolute flex flex-col top-0 left-0 w-full h-full backdrop-blur-lg justify-center items-center">
+    <div class="w-4/5 p-4 grid grid-cols-12 gap-2 bg-gray-600 rounded-md justify-center">
+        <ng-container *ngFor="let row of rows">
+            <div class="grid grid-cols-12 gap-1" *ngFor="let col of columns">
+                <div class="col-span-1">
+                    <button (click)="sendStart(nums[(row * 12) + col])" class="flex items-center justify-center h-10 w-10 text-gray-200 text-md bg-gray-800 rounded-full hover:border-2 hover:border-sky-400">
+                        {{ nums[(row * 12) + col] }}
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+    <button class="w-fit m-2" (click)="closeModal()">Close</button>
+</div>

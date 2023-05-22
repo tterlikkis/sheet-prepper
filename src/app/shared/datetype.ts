@@ -11,4 +11,15 @@ export class DateData {
     setDoubles = (doubles: typeof this.doubles) => this.doubles = doubles;
     missing = "";
     setMissing = (missing: typeof this.missing) => this.missing = missing;
+
+    toJson = () => {
+        return {
+            date: this.date,
+            dogs: this.dogs,
+            horses: this.horses,
+            birds: this.birds,
+            doubles: this.doubles,
+            missing: this.missing
+        }
+    }
 }

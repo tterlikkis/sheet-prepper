@@ -1,4 +1,9 @@
-<div class="flex p-6 flex-row space-x-2 items-center">
-  <control-panel class="flex self-end"></control-panel>
-  <date-column></date-column>
+<div class="flex p-6 flex-row space-x-2 content-center">
+  <control-panel class="flex self-end w-1/4 max-w-1/4 min-w-1/4" [start]="start" (addDateEvent)="addDate()" (submitEvent)="submit()" 
+    (modalEvent)="toggleModal()" (startEvent)="updateStart($event)"></control-panel>
+  <div class="flex flex-row space-x-2 items-center max-w-1/4" *ngFor="let date of dates; let i = index">
+    <date-column [index]="i" [datedata]="date" 
+      (removeDateEvent)="removeDate($event)" (updateDateEvent)="updateDate($event)"/>
+  </div>
 </div>
+<modal *ngIf="showModal" (closeEvent)="toggleModal()" (startEvent)="updateStart($event)"></modal>

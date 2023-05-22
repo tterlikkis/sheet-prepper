@@ -1,29 +1,29 @@
 <div class="flex flex-col space-y-2">
     <div>
         <label for="date-input" class="block">Date</label>
-        <input id="date-input" type="text" (keyup)="handleDateChange($event)" />
+        <input id="date-input" type="text" [value]="datedata.date" (input)="handleDateChange($event)"/>
     </div>
     <div>
         <label for="dogs-input" class="block">Dogs</label>
-        <input id="dogs-input" type="text" (keyup)="handleDogsChange($event)" />
+        <input id="dogs-input" type="text" [value]="datedata.dogs" (input)="handleDogsChange($event)" />
     </div>
     <div>
         <label for="horses-input" class="block">Horses</label>
-        <input id="horses-input" type="text" (keyup)="handleHorsesChange($event)" />
+        <input id="horses-input" type="text" [value]="datedata.horses" (input)="handleHorsesChange($event)" />
     </div>
     <div>
         <label for="birds-input" class="block">Birds</label>
-        <input id="birds-input" type="text" (keyup)="handleBirdsChange($event)" />
+        <input id="birds-input" type="text" [value]="datedata.birds" (input)="handleBirdsChange($event)" />
     </div>
     <div>
         <label for="doubles-input" class="block">Doubles</label>
-        <input id="doubles-input" type="text" (keyup)="handleDoublesChange($event)" />
+        <input id="doubles-input" type="text" [value]="datedata.doubles" (input)="handleDoublesChange($event)" />
     </div>
     <div>
         <label for="missing-input" class="block">Missing</label>
-        <input id="missing-input" type="text" (keyup)="handleMissingChange($event)" />
+        <input id="missing-input" type="text" [value]="datedata.missing" (input)="handleMissingChange($event)" />
     </div>
     <div class="flex justify-center">
-        <button class="mt-2 bg-red-600">Remove Date</button>
+        <button class="mt-2 bg-red-600" (click)="removeDate()">Remove Date</button>
     </div>
 </div>
