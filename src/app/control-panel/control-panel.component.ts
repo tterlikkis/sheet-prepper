@@ -3,7 +3,8 @@ import { DateData } from "../shared/datetype";
 
 @Component({
     selector: "control-panel",
-    templateUrl: "./control-panel.component.html"
+    templateUrl: "./control-panel.component.html",
+    providers: []
 })
 export class ControlPanelComponent {
 

@@ -6,8 +6,10 @@ import { DateData } from "./shared/datetype";
   selector: "app-root",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.css"],
+  providers: []
 })
 export class AppComponent {
+
   greetingMessage = "";
 
   dates: Array<DateData>;
