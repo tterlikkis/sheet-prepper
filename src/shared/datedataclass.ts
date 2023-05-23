@@ -20,7 +20,6 @@ export class DateDataClass {
     missing = "";
     setMissing = (missing: typeof this.missing) => this.missing = missing;
 
-<<<<<<<< HEAD:src/app/shared/datetype.ts
     toJson = () => {
         return {
             date: this.date,
@@ -30,9 +29,5 @@ export class DateDataClass {
             doubles: this.doubles,
             missing: this.missing
         }
-========
-    constructor(index: number) {
-        this.index = index;
->>>>>>>> 9cc4acc82776f1d2fa33e0e53e9b7f2b3e624e90:src/shared/datedataclass.ts
     }
 }
