@@ -14,6 +14,7 @@ export class ControlPanelComponent {
     @Output() submitEvent = new EventEmitter();
     @Output() modalEvent = new EventEmitter();
     @Output() startEvent = new EventEmitter<number>();
+    @Output() openEvent = new EventEmitter();
 
     addDate = () => {
         this.addDateEvent.emit();
@@ -30,4 +31,9 @@ export class ControlPanelComponent {
     updateStart = () => {
         this.startEvent.emit(this.start);
     }
+
+    open = () => {
+        this.openEvent.emit(this.start);
+    }
+    
 }

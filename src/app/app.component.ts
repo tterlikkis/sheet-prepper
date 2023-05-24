@@ -12,12 +12,17 @@ export class AppComponent {
 
   greetingMessage = "";
 
+  message = "";
+
   dates: Array<DateData>;
   start = 1;
   setStart = (start: typeof this.start) => this.start = start;
 
   showModal = false;
   setModal = (showModal: typeof this.showModal) => this.showModal = showModal;
+  
+  showErrorModal = false;
+  setErrorModal = (showErrorModal: typeof this.showErrorModal) => this.showErrorModal = showErrorModal;
 
   constructor() {
     this.dates = [new DateData()];
@@ -44,7 +49,15 @@ export class AppComponent {
       sendDates.push(date.toJson());
     }
 
-    invoke("submit", {start: this.start, data: sendDates});
+    invoke("submit", {start: this.start, data: sendDates})
+      .catch((error) => {
+        this.message = error;
+        this.toggleErrorModal();
+      });
+
+    if (this.message == "") {
+      this.open();
+    }
   }
 
   toggleModal = () => {
@@ -53,6 +66,20 @@ export class AppComponent {
 
   updateStart = (start: number) => {
     this.setStart(start);
+  }
+
+  toggleErrorModal = () => {
+    this.setErrorModal(!this.showErrorModal);
+    if (!this.showErrorModal) {
+      this.message = "";
+    }
+  }
+
+  open = () => {
+    invoke("open").catch((error) => {
+      this.message = error;
+      this.toggleErrorModal();
+    });
   }
 
   greet(event: SubmitEvent, name: string): void {

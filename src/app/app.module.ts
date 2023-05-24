@@ -6,6 +6,7 @@ import { DateColumnModule } from "./date-column/date-column.module";
 import { ControlPanelModule } from "./control-panel/control-panel.module";
 import { FormsModule } from "@angular/forms";
 import { ModalModule } from "./modal/modal.component.module";
+import { ErrorModalModule } from "./error-modal/error-modal.component.module";
 
 @NgModule({
   declarations: [AppComponent],
@@ -14,7 +15,8 @@ import { ModalModule } from "./modal/modal.component.module";
       ControlPanelModule,
       DateColumnModule,
       FormsModule,
-      ModalModule
+      ModalModule,
+      ErrorModalModule
   ],
   providers: [],
   bootstrap: [AppComponent],
