@@ -40,7 +40,6 @@ fn open() -> Result<(), String> {
 
 #[tauri::command]
 fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
-    println!("Start: {}\nData: {:?}", start, data);
 
     let mut workbook = Workbook::new();
     let date_format = Format::new().set_num_format("mm/dd");
@@ -48,8 +47,6 @@ fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
 
     let mut row = 0;
     for datedata in data {
-
-        println!("{:?}", datedata);
 
         if !date_valid(&datedata.date) {
             return Err("Invalid date".to_string());
@@ -62,19 +59,13 @@ fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
         let dogs: Vec<i32> = raw.iter().filter(|num| 
             !missing.contains(&(*num))).cloned().collect::<Vec<i32>>();
 
-        println!("dogs {:?}", dogs);
-
         let raw = de_range(&datedata.horses)?;
         let horses: Vec<i32> = raw.iter().filter(|num|
             !missing.contains(&(*num))).cloned().collect::<Vec<i32>>();
 
-        println!("horses {:?}", horses);
-
         let raw = de_range(&datedata.birds)?;
         let birds: Vec<i32> = raw.iter().filter(|num|
             !missing.contains(&(*num))).cloned().collect::<Vec<i32>>();
-
-        println!("birds {:?}", birds);
 
         for tube in dogs {
             worksheet.write(row, 0, start).unwrap();
@@ -83,7 +74,6 @@ fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
             worksheet.write_with_format(row, 3, &datedata.date, &date_format).unwrap();
             row += 1;
             start += 1;
-            println!("{} {} {} {}", start, " C", tube, datedata.date);
         }
 
         for tube in horses {
@@ -93,7 +83,6 @@ fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
             worksheet.write_with_format(row, 3, &datedata.date, &date_format).unwrap();
             row += 1;
             start += 1;
-            println!("{} {} {} {}", start, " E", tube, datedata.date);
         }
 
         for tube in birds {
@@ -103,7 +92,6 @@ fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
             worksheet.write_with_format(row, 3, &datedata.date, &date_format).unwrap();
             row += 1;
             start += 1;
-            println!("{} {} {} {}", start, " A", tube, datedata.date);
 
             if doubles.contains(&tube) {
                 worksheet.write(row, 0, start).unwrap();
@@ -112,14 +100,11 @@ fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
                 worksheet.write_with_format(row, 3, &datedata.date, &date_format).unwrap();
                 row += 1;
                 start += 1;
-                println!("{} {} {} {}", start, "AS", tube, datedata.date);
             }
         }
     }
 
     workbook.save("Tubes.xlsx").unwrap();
-
-    println!("Saved");
 
     Ok(())
 }
@@ -132,7 +117,6 @@ fn de_range(range: &String) -> Result<Vec<i32>, String> {
     }
 
     if !range_valid(range) {
-        println!("Invalid syntax");
         return Err("Invalid syntax".to_string());
     }
 
@@ -148,7 +132,6 @@ fn de_range(range: &String) -> Result<Vec<i32>, String> {
         }
         
         if endpoints[0] > endpoints[1] {
-            println!("Invalid range, beginning {} is greater than ending {}", endpoints[0], endpoints[1]);
             return Err(format!("Invalid range, beginning {} is greater than ending {}", endpoints[0], endpoints[1]));
         }
 
@@ -157,8 +140,6 @@ fn de_range(range: &String) -> Result<Vec<i32>, String> {
         }
 
     }
-
-    println!("de_range vals {:?}", vals);
 
     return Ok(vals);
 }
