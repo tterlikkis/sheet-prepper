@@ -50,14 +50,11 @@ export class AppComponent {
     }
 
     invoke("submit", {start: this.start, data: sendDates})
+      .then(() => this.open())
       .catch((error) => {
         this.message = error;
         this.toggleErrorModal();
       });
-
-    if (this.message == "") {
-      this.open();
-    }
   }
 
   toggleModal = () => {

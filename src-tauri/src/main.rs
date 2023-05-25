@@ -2,8 +2,11 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use std::{fs::File, io::BufReader};
+use std::io::prelude::*;
+use std::path::Path;
 use std::process::Command;
-
+use sysinfo::{ProcessExt, System, SystemExt};
 use serde::{Serialize, Deserialize};
 use tauri::regex::Regex;
 use rust_xlsxwriter::{Format, Workbook};
@@ -28,11 +31,18 @@ fn greet(name: &str) -> String {
 fn open() -> Result<(), String> {
     let path = "./Tubes.xlsx";
 
-    let output = Command::new("C:\\Program Files\\Microsoft Office\\root\\Office16\\excel.exe")
-        .arg(path).output();
+    let file = File::open("./config.txt").unwrap();
+    let reader = BufReader::new(file);
+    let excel_path = reader.lines().next().unwrap().unwrap();
+
+    for _process in System::new_all().processes_by_name("excel.exe") {
+        return Err("Please close Tubes.xlsx".to_string());
+    }
+
+    let output = Command::new(excel_path).arg(path).spawn();
 
     if output.is_err() {
-        return Err("Please close Tubes.xlsx".to_string());
+        return Err("Error opening Excel, make sure to set the Excel path in settings.".to_string());
     }
 
     return Ok(());
@@ -126,11 +136,13 @@ fn de_range(range: &String) -> Result<Vec<i32>, String> {
     for ran in ranges {
         let endpoints: Vec<i32> = ran.split('-').map(|x| x.parse::<i32>().unwrap()).collect();
 
+        // Single value
         if endpoints.len() == 1 {
             vals.push(endpoints[0]);
             continue;
         }
         
+        // Range
         if endpoints[0] > endpoints[1] {
             return Err(format!("Invalid range, beginning {} is greater than ending {}", endpoints[0], endpoints[1]));
         }
@@ -158,6 +170,13 @@ fn date_valid(date: &String) -> bool {
 }
 
 fn main() {
+
+    if !Path::new("./config.json").exists() {
+        let mut file = File::create("config.json").unwrap();
+        file.write(b"C:\\Program Files\\Microsoft Office\\root\\Office16\\excel.exe");
+    }
+
+
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![greet, submit, open])
         .run(tauri::generate_context!())
