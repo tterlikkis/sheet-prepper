@@ -49,4 +49,9 @@ export class DateColumnComponent {
         this.datedata.setMissing(event.target.value);
         this.updateDate();
     }
+
+    handleRetestsChange = (event: any) => {
+        this.datedata.setRetests(event.target.checked);
+        this.updateDate();
+    }
 }

@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { invoke } from "@tauri-apps/api/tauri";
 import { DateData } from "./shared/datetype";
+import { SettingsData } from "./shared/settingstype";
 
 @Component({
   selector: "app-root",
@@ -12,11 +13,16 @@ export class AppComponent {
 
   greetingMessage = "";
 
-  message = "";
-
   dates: Array<DateData>;
+
+  message = "";
+  setMessage = (message: typeof this.message) => this.message = message;
+
   start = 1;
   setStart = (start: typeof this.start) => this.start = start;
+
+  settings!: SettingsData;
+  setSettingsData = (settings: typeof this.settings) => this.settings = settings;
 
   showModal = false;
   setModal = (showModal: typeof this.showModal) => this.showModal = showModal;
@@ -24,8 +30,12 @@ export class AppComponent {
   showErrorModal = false;
   setErrorModal = (showErrorModal: typeof this.showErrorModal) => this.showErrorModal = showErrorModal;
 
+  showSettingsModal = false;
+  setSettingsModal = (showSettingsModal: typeof this.showSettingsModal) => this.showSettingsModal = showSettingsModal;
+
   constructor() {
     this.dates = [new DateData()];
+    this.grabSettings();
   }
 
   addDate = () => {
@@ -40,6 +50,10 @@ export class AppComponent {
     this.dates.splice(event.index, 1, event.data);
   }
 
+  updateStart = (start: number) => {
+    this.setStart(start);
+  }
+
   submit = () => {
     console.log(this.dates);
     console.log(this.start);
@@ -52,7 +66,7 @@ export class AppComponent {
     invoke("submit", {start: this.start, data: sendDates})
       .then(() => this.open())
       .catch((error) => {
-        this.message = error;
+        this.setMessage(error as string);
         this.toggleErrorModal();
       });
   }
@@ -61,21 +75,53 @@ export class AppComponent {
     this.setModal(!this.showModal);
   }
 
-  updateStart = (start: number) => {
-    this.setStart(start);
-  }
-
   toggleErrorModal = () => {
     this.setErrorModal(!this.showErrorModal);
     if (!this.showErrorModal) {
-      this.message = "";
+      this.setMessage("");
+    }
+  }
+
+  toggleSettingsModal = () => {
+    this.setSettingsModal(!this.showSettingsModal);
+    if (!this.showSettingsModal) {
+      this.setMessage("");
     }
   }
 
   open = () => {
-    invoke("open").catch((error) => {
-      this.message = error;
-      this.toggleErrorModal();
+    invoke("open")
+      .catch((error) => {
+        this.setMessage(error as string);
+        this.toggleErrorModal();
+    });
+  }
+
+  grabSettings = () => {
+    let temp: SettingsData = {
+      path: "",
+      dogCh: "",
+      horseCh: "",
+      birdCh: "",
+      doubleCh: "",
+      numberSpace: true
+    }
+    invoke<SettingsData>("read")
+      .then((data) => this.setSettingsData(data))
+      .catch((error) => {
+        this.setSettingsData(temp);
+        this.setMessage(error as string);
+        this.toggleErrorModal(); // Don't use toggle function as it will delete message
+    });
+  }
+
+  saveSettings = (data: SettingsData) => {
+    invoke("write", { data })
+      .then(() => this.toggleSettingsModal())
+      .catch((error) => {
+        console.log("Received error.");
+        this.setMessage(error as string);
+        this.toggleErrorModal();
     });
   }
 

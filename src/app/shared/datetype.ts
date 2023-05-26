@@ -11,6 +11,8 @@ export class DateData {
     setDoubles = (doubles: typeof this.doubles) => this.doubles = doubles;
     missing = "";
     setMissing = (missing: typeof this.missing) => this.missing = missing;
+    retests = false;
+    setRetests = (retests: typeof this.retests) => this.retests = retests;
 
     toJson = () => {
         return {
@@ -19,7 +21,8 @@ export class DateData {
             horses: this.horses,
             birds: this.birds,
             doubles: this.doubles,
-            missing: this.missing
+            missing: this.missing,
+            retests: this.retests
         }
     }
 }

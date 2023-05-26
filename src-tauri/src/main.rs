@@ -2,6 +2,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use std::fs::OpenOptions;
 use std::{fs::File, io::BufReader};
 use std::io::prelude::*;
 use std::path::Path;
@@ -18,7 +19,18 @@ struct DateData {
     horses: String,
     birds: String,
     doubles: String,
-    missing: String
+    missing: String,
+    retests: bool
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct SettingsData {
+    path: String,
+    dogCh: String,
+    horseCh: String,
+    birdCh: String,
+    doubleCh: String,
+    numberSpace: bool
 }
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
@@ -28,18 +40,68 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-fn open() -> Result<(), String> {
-    let path = "./Tubes.xlsx";
+fn read() -> Result<SettingsData, String> {
+    let mut result = SettingsData {
+        path: String::from(""),
+        dogCh: String::from(""),
+        horseCh: String::from(""),
+        birdCh: String::from(""),
+        doubleCh: String::from(""),
+        numberSpace: false
+    };
 
     let file = File::open("./config.txt").unwrap();
     let reader = BufReader::new(file);
-    let excel_path = reader.lines().next().unwrap().unwrap();
+    let mut lines = reader.lines();
+
+    result.path = lines.next().unwrap().unwrap();
+    result.dogCh = lines.next().unwrap().unwrap();
+    result.horseCh = lines.next().unwrap().unwrap();
+    result.birdCh = lines.next().unwrap().unwrap();
+    result.doubleCh = lines.next().unwrap().unwrap();
+    result.numberSpace = lines.next().unwrap().unwrap() == "true";
+
+    return Ok(result);    
+}
+
+#[tauri::command]
+fn write(data: SettingsData) -> Result<(), String> {
+
+    let mut file = OpenOptions::new().write(true).open("./config.txt").unwrap();
+    let mut results = vec![];
+
+    results.push(file.write_all(data.path.as_bytes()));
+    results.push(file.write_all(b"\n"));
+    results.push(file.write_all(data.dogCh.as_bytes()));
+    results.push(file.write_all(b"\n"));
+    results.push(file.write_all(data.horseCh.as_bytes()));
+    results.push(file.write_all(b"\n"));
+    results.push(file.write_all(data.birdCh.as_bytes()));
+    results.push(file.write_all(b"\n"));
+    results.push(file.write_all(data.doubleCh.as_bytes()));
+    results.push(file.write_all(b"\n"));
+    results.push(file.write_all(b"true"));
+
+    for res in results {
+        if res.is_err() {
+            return Err("Error writing to config file".to_string());
+        }
+    }
+
+    return Ok(());
+}
+
+#[tauri::command]
+fn open() -> Result<(), String> {
+    let path = "./Tubes.xlsx";
+
+    let settings = read().unwrap();
 
     for _process in System::new_all().processes_by_name("excel.exe") {
         return Err("Please close Tubes.xlsx".to_string());
     }
 
-    let output = Command::new(excel_path).arg(path).spawn();
+    let output = Command::new(settings.path).arg(path).spawn();
 
     if output.is_err() {
         return Err("Error opening Excel, make sure to set the Excel path in settings.".to_string());
@@ -55,8 +117,13 @@ fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
     let date_format = Format::new().set_num_format("mm/dd");
     let worksheet = workbook.add_worksheet();
 
+    // Easiest way to add leading space fml
+    let mut settings = read().unwrap();
+
     let mut row = 0;
     for datedata in data {
+
+
 
         if !date_valid(&datedata.date) {
             return Err("Invalid date".to_string());
@@ -77,27 +144,43 @@ fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
         let birds: Vec<i32> = raw.iter().filter(|num|
             !missing.contains(&(*num))).cloned().collect::<Vec<i32>>();
 
+        let mut dog_ch = settings.dogCh.clone();
+        dog_ch.insert(0, ' ');
+        if datedata.retests { dog_ch.push('R'); }
+
         for tube in dogs {
             worksheet.write(row, 0, start).unwrap();
-            worksheet.write(row, 1, " C").unwrap();
+            worksheet.write(row, 1, &dog_ch).unwrap();
             worksheet.write(row, 2, if tube < 1000 {format!(" {}", tube)} else {tube.to_string()}).unwrap();
             worksheet.write_with_format(row, 3, &datedata.date, &date_format).unwrap();
             row += 1;
             start += 1;
         }
+
+        let mut horse_ch = settings.horseCh.clone();
+        horse_ch.insert(0, ' ');
+        if datedata.retests { horse_ch.push('R'); }
 
         for tube in horses {
             worksheet.write(row, 0, start).unwrap();
-            worksheet.write(row, 1, " E").unwrap();
+            worksheet.write(row, 1, &horse_ch).unwrap();
             worksheet.write(row, 2, if tube < 1000 {format!(" {}", tube)} else {tube.to_string()}).unwrap();
             worksheet.write_with_format(row, 3, &datedata.date, &date_format).unwrap();
             row += 1;
             start += 1;
         }
 
+        let mut bird_ch = settings.birdCh.clone();
+        bird_ch.insert(0, ' ');
+        if datedata.retests { bird_ch.push('R'); }
+
+        let mut double_ch = settings.doubleCh.clone();
+        double_ch.insert(0, ' ');
+        if datedata.retests { double_ch.push('R')}
+
         for tube in birds {
             worksheet.write(row, 0, start).unwrap();
-            worksheet.write(row, 1, " A").unwrap();
+            worksheet.write(row, 1, &settings.birdCh).unwrap();
             worksheet.write(row, 2, if tube < 1000 {format!(" {}", tube)} else {tube.to_string()}).unwrap();
             worksheet.write_with_format(row, 3, &datedata.date, &date_format).unwrap();
             row += 1;
@@ -105,7 +188,7 @@ fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
 
             if doubles.contains(&tube) {
                 worksheet.write(row, 0, start).unwrap();
-                worksheet.write(row, 1, "AS").unwrap();
+                worksheet.write(row, 1, &settings.doubleCh).unwrap();
                 worksheet.write(row, 2, if tube < 1000 {format!(" {}", tube)} else {tube.to_string()}).unwrap();
                 worksheet.write_with_format(row, 3, &datedata.date, &date_format).unwrap();
                 row += 1;
@@ -157,7 +240,6 @@ fn de_range(range: &String) -> Result<Vec<i32>, String> {
 }
 
 fn range_valid(range: &String) -> bool {
-
     if range == "" { return true; }
 
     let pattern = Regex::new(r"^(\d+|\d+-\d+)(?:[+\s,](\d+|\d+-\d+))*$").unwrap();
@@ -170,15 +252,19 @@ fn date_valid(date: &String) -> bool {
 }
 
 fn main() {
+    if !Path::new("./config.txt").exists() {
+        let mut file = File::create("config.txt").unwrap();
+        file.write_all(b"C:\\Program Files\\Microsoft Office\\root\\Office16\\excel.exe\n").unwrap();
+        file.write_all(b"C\n").unwrap();
+        file.write_all(b"E\n").unwrap();
+        file.write_all(b"A\n").unwrap();
+        file.write_all(b"AS\n").unwrap();
+        file.write_all(b"true").unwrap();
 
-    if !Path::new("./config.json").exists() {
-        let mut file = File::create("config.json").unwrap();
-        file.write(b"C:\\Program Files\\Microsoft Office\\root\\Office16\\excel.exe");
     }
 
-
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet, submit, open])
+        .invoke_handler(tauri::generate_handler![greet, submit, open, read, write])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

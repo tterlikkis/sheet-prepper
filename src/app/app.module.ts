@@ -5,8 +5,9 @@ import { AppComponent } from "./app.component";
 import { DateColumnModule } from "./date-column/date-column.module";
 import { ControlPanelModule } from "./control-panel/control-panel.module";
 import { FormsModule } from "@angular/forms";
-import { ModalModule } from "./modal/modal.component.module";
-import { ErrorModalModule } from "./error-modal/error-modal.component.module";
+import { ModalModule } from "./modals/modal/modal.component.module";
+import { ErrorModalModule } from "./modals/error-modal/error-modal.component.module";
+import { SettingsModalModule } from "./modals/settings-modal/settings-modal.component.module";
 
 @NgModule({
   declarations: [AppComponent],
@@ -16,7 +17,8 @@ import { ErrorModalModule } from "./error-modal/error-modal.component.module";
       DateColumnModule,
       FormsModule,
       ModalModule,
-      ErrorModalModule
+      ErrorModalModule,
+      SettingsModalModule
   ],
   providers: [],
   bootstrap: [AppComponent],

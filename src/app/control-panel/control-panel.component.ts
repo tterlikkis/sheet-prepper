@@ -13,6 +13,7 @@ export class ControlPanelComponent {
     @Output() addDateEvent = new EventEmitter();
     @Output() submitEvent = new EventEmitter();
     @Output() modalEvent = new EventEmitter();
+    @Output() settingsModalEvent = new EventEmitter();
     @Output() startEvent = new EventEmitter<number>();
     @Output() openEvent = new EventEmitter();
 
@@ -26,6 +27,10 @@ export class ControlPanelComponent {
 
     showModal = () => {
         this.modalEvent.emit();
+    }
+
+    showSettingsModal = () => {
+        this.settingsModalEvent.emit();
     }
 
     updateStart = () => {

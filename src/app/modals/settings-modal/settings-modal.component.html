@@ -1,0 +1,36 @@
+<div class="absolute flex flex-col top-0 left-0 w-full h-full backdrop-blur-lg justify-center items-center">
+    <div class="flex flex-col w-4/5 p-4 bg-gray-600 rounded-md justify-items-center items-center">
+        <label for="path-input" class="block">Path to Excel</label>
+        <input id="path-input" class="w-full" [(ngModel)]="settings.path" />
+
+        <span class="p-2">
+            <label for="dogch-input">Dog Character</label>
+            <input id="dogch-input" class="w-[10ch] ml-2" [(ngModel)]="settings.dogCh"/>
+        </span>
+
+        <span class="p-2">
+            <label for="horsech-input">Horse Character</label>
+            <input id="horsech-input" class="w-[10ch] ml-2" [(ngModel)]="settings.horseCh"/>
+        </span>
+
+        <span class="p-2">
+            <label for="birdch-input">Bird Character</label>
+            <input id="birdch-input" class="w-[10ch] ml-2" [(ngModel)]="settings.birdCh"/>
+        </span>
+
+        <span class="p-2">
+            <label for="doublech-input">Double Character</label>
+            <input id="doublech-input" class="w-[10ch] ml-2" [(ngModel)]="settings.doubleCh"/>
+        </span>
+
+        <div class="flex flex-row m-2 p-2">
+            <label for="numbersp-input">Space Before 3-Digit Numbers</label>
+            <input id="numbersp-input" class="shadow-none ml-2 accent-blue-600" type="checkbox" [(ngModel)]="settings.numberSpace"/>
+        </div>
+    </div>
+    
+    <div class="flex flex-row">
+        <button class="w-fit m-2" (click)="closeModal()">Close</button>
+        <button class="w-fit m-2 bg-green-600 hover:border-green-400" (click)="saveModal()">Save</button>
+    </div>
+</div>

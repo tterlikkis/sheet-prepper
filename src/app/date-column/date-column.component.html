@@ -23,7 +23,16 @@
         <label for="missing-input" class="block">Missing</label>
         <input id="missing-input" type="text" [value]="datedata.missing" (input)="handleMissingChange($event)" />
     </div>
-    <div class="flex justify-center">
-        <button class="mt-2 bg-red-600" (click)="removeDate()">Remove Date</button>
+    <div class="flex flex-row justify-center items-center space-x-2">
+        <span class="flex flex-row items-center space-x-1 bg-[#1c1c1c] p-2 rounded-md">
+            <label for="retests-input">Retests</label>
+            <input id="retests-input" type="checkbox" [value]="datedata.retests" (input)="handleRetestsChange($event)" />
+        </span>
+        <button class="bg-red-600" (click)="removeDate()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+        </button>
     </div>
 </div>
