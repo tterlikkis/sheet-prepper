@@ -100,6 +100,7 @@ export class AppComponent {
   grabSettings = () => {
     let temp: SettingsData = {
       path: "",
+      file: "",
       dogCh: "",
       horseCh: "",
       birdCh: "",

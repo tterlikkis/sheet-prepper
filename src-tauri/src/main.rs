@@ -26,6 +26,7 @@ struct DateData {
 #[derive(Serialize, Deserialize, Debug)]
 struct SettingsData {
     path: String,
+    file: String,
     dogCh: String,
     horseCh: String,
     birdCh: String,
@@ -39,10 +40,16 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
+// #[tauri::command]
+// fn check() -> String {
+
+// }
+
 #[tauri::command]
 fn read() -> Result<SettingsData, String> {
     let mut result = SettingsData {
         path: String::from(""),
+        file: String::from(""),
         dogCh: String::from(""),
         horseCh: String::from(""),
         birdCh: String::from(""),
@@ -55,6 +62,7 @@ fn read() -> Result<SettingsData, String> {
     let mut lines = reader.lines();
 
     result.path = lines.next().unwrap().unwrap();
+    result.file = lines.next().unwrap().unwrap();
     result.dogCh = lines.next().unwrap().unwrap();
     result.horseCh = lines.next().unwrap().unwrap();
     result.birdCh = lines.next().unwrap().unwrap();
@@ -71,6 +79,8 @@ fn write(data: SettingsData) -> Result<(), String> {
     let mut results = vec![];
 
     results.push(file.write_all(data.path.as_bytes()));
+    results.push(file.write_all(b"\n"));
+    results.push(file.write_all(data.file.as_bytes()));
     results.push(file.write_all(b"\n"));
     results.push(file.write_all(data.dogCh.as_bytes()));
     results.push(file.write_all(b"\n"));
@@ -93,15 +103,14 @@ fn write(data: SettingsData) -> Result<(), String> {
 
 #[tauri::command]
 fn open() -> Result<(), String> {
-    let path = "./Tubes.xlsx";
 
     let settings = read().unwrap();
 
-    for _process in System::new_all().processes_by_name("excel.exe") {
-        return Err("Please close Tubes.xlsx".to_string());
+    for _process in System::new_all().processes_by_name("EXCEL") {
+        return Err("Excel is already running.".to_string());
     }
 
-    let output = Command::new(settings.path).arg(path).spawn();
+    let output = Command::new(settings.path).arg(settings.file).spawn();
 
     if output.is_err() {
         return Err("Error opening Excel, make sure to set the Excel path in settings.".to_string());
@@ -122,8 +131,6 @@ fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
 
     let mut row = 0;
     for datedata in data {
-
-
 
         if !date_valid(&datedata.date) {
             return Err("Invalid date".to_string());
@@ -255,6 +262,7 @@ fn main() {
     if !Path::new("./config.txt").exists() {
         let mut file = File::create("config.txt").unwrap();
         file.write_all(b"C:\\Program Files\\Microsoft Office\\root\\Office16\\excel.exe\n").unwrap();
+        file.write_all(b"C:\\Program Files\\sheet-prepper\\Tubes.xlsx\n").unwrap();
         file.write_all(b"C\n").unwrap();
         file.write_all(b"E\n").unwrap();
         file.write_all(b"A\n").unwrap();

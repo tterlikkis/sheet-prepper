@@ -1,4 +1,5 @@
 C:\Program Files\Microsoft Office\root\Office16\excel.exe
+C:\Users\Sean\sheet-prepper\src-tauri\Tubes.xlsx
 C
 E
 A
