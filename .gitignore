@@ -37,7 +37,7 @@ package-lock.json
 /libpeerconnection.log
 testem.log
 /typings
-Tubes.xlsx
+src-tauri/Tubes.xlsx
 
 # System files
 .DS_Store

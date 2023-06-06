@@ -107,7 +107,8 @@ fn open() -> Result<(), String> {
     let settings = read().unwrap();
 
     for process in System::new_all().processes_by_name("EXCEL") {
-        process.kill();
+        println!("{:?}", process);
+        // process.kill();
     }
 
     let output = Command::new(settings.path).arg(settings.file).spawn();
@@ -204,7 +205,11 @@ fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
         }
     }
 
-    workbook.save("Tubes.xlsx").unwrap();
+    let result = workbook.save("Tubes.xlsx");
+
+    if result.is_err() {
+        return Err("Please close Tubes file".to_string());
+    }
 
     Ok(())
 }
