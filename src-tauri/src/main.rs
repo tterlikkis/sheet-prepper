@@ -106,8 +106,8 @@ fn open() -> Result<(), String> {
 
     let settings = read().unwrap();
 
-    for _process in System::new_all().processes_by_name("EXCEL") {
-        return Err("Excel is already running.".to_string());
+    for process in System::new_all().processes_by_name("EXCEL") {
+        process.kill();
     }
 
     let output = Command::new(settings.path).arg(settings.file).spawn();
