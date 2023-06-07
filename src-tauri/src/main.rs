@@ -171,7 +171,7 @@ fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
 
         for tube in birds {
             worksheet.write(row, 0, start).unwrap();
-            worksheet.write(row, 1, &settings.birdCh).unwrap();
+            worksheet.write(row, 1, &bird_ch).unwrap();
             worksheet.write(row, 2, if tube < 1000 {format!(" {}", tube)} else {tube.to_string()}).unwrap();
             worksheet.write_with_format(row, 3, &datedata.date, &date_format).unwrap();
             row += 1;
@@ -179,7 +179,7 @@ fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
 
             if doubles.contains(&tube) {
                 worksheet.write(row, 0, start).unwrap();
-                worksheet.write(row, 1, &settings.doubleCh).unwrap();
+                worksheet.write(row, 1, &double_ch).unwrap();
                 worksheet.write(row, 2, if tube < 1000 {format!(" {}", tube)} else {tube.to_string()}).unwrap();
                 worksheet.write_with_format(row, 3, &datedata.date, &date_format).unwrap();
                 row += 1;
