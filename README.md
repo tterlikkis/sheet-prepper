@@ -16,4 +16,5 @@ Open a terminal in cloned directory and run
 ```npm install``` followed by ```npm run tauri build```  
   
 A windows installer will then be located in src-tauri/target/release/bundle/msi  
-For non-windows users please use the setup exe in src-tauri/target/release/bundle/nsis
+For non-windows users please use the setup exe in src-tauri/target/release/bundle/nsis  
+test
