@@ -2,12 +2,10 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::fs::OpenOptions;
-use std::{fs::File, io::BufReader};
+use std::{fs::File, io::BufReader, fs::create_dir, fs::OpenOptions};
 use std::io::prelude::*;
 use std::path::Path;
 use std::process::Command;
-use sysinfo::{ProcessExt, System, SystemExt};
 use serde::{Serialize, Deserialize};
 use tauri::regex::Regex;
 use rust_xlsxwriter::{Format, Workbook};
@@ -34,17 +32,6 @@ struct SettingsData {
     numberSpace: bool
 }
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
-// #[tauri::command]
-// fn check() -> String {
-
-// }
-
 #[tauri::command]
 fn read() -> Result<SettingsData, String> {
     let mut result = SettingsData {
@@ -57,7 +44,7 @@ fn read() -> Result<SettingsData, String> {
         numberSpace: false
     };
 
-    let file = File::open("./config.txt").unwrap();
+    let file = File::open("././config.txt").unwrap();
     let reader = BufReader::new(file);
     let mut lines = reader.lines();
 
@@ -75,7 +62,7 @@ fn read() -> Result<SettingsData, String> {
 #[tauri::command]
 fn write(data: SettingsData) -> Result<(), String> {
 
-    let mut file = OpenOptions::new().write(true).open("./config.txt").unwrap();
+    let mut file = OpenOptions::new().write(true).open("././config.txt").unwrap();
     let mut results = vec![];
 
     results.push(file.write_all(data.path.as_bytes()));
@@ -106,10 +93,6 @@ fn open() -> Result<(), String> {
 
     let settings = read().unwrap();
 
-    for _process in System::new_all().processes_by_name("EXCEL") {
-        return Err("Excel is already running.".to_string());
-    }
-
     let output = Command::new(settings.path).arg(settings.file).spawn();
 
     if output.is_err() {
@@ -122,12 +105,13 @@ fn open() -> Result<(), String> {
 #[tauri::command]
 fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
 
+    println!("{}", start);
+
     let mut workbook = Workbook::new();
     let date_format = Format::new().set_num_format("mm/dd");
     let worksheet = workbook.add_worksheet();
 
-    // Easiest way to add leading space fml
-    let mut settings = read().unwrap();
+    let settings = read().unwrap();
 
     let mut row = 0;
     for datedata in data {
@@ -183,11 +167,11 @@ fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
 
         let mut double_ch = settings.doubleCh.clone();
         double_ch.insert(0, ' ');
-        if datedata.retests { double_ch.push('R')}
+        if datedata.retests { double_ch.push('R'); }
 
         for tube in birds {
             worksheet.write(row, 0, start).unwrap();
-            worksheet.write(row, 1, &settings.birdCh).unwrap();
+            worksheet.write(row, 1, &bird_ch).unwrap();
             worksheet.write(row, 2, if tube < 1000 {format!(" {}", tube)} else {tube.to_string()}).unwrap();
             worksheet.write_with_format(row, 3, &datedata.date, &date_format).unwrap();
             row += 1;
@@ -195,7 +179,7 @@ fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
 
             if doubles.contains(&tube) {
                 worksheet.write(row, 0, start).unwrap();
-                worksheet.write(row, 1, &settings.doubleCh).unwrap();
+                worksheet.write(row, 1, &double_ch).unwrap();
                 worksheet.write(row, 2, if tube < 1000 {format!(" {}", tube)} else {tube.to_string()}).unwrap();
                 worksheet.write_with_format(row, 3, &datedata.date, &date_format).unwrap();
                 row += 1;
@@ -204,7 +188,11 @@ fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
         }
     }
 
-    workbook.save("Tubes.xlsx").unwrap();
+    let result = workbook.save(settings.file);
+
+    if result.is_err() {
+        return Err("Please close Tubes file".to_string());
+    }
 
     Ok(())
 }
@@ -259,10 +247,17 @@ fn date_valid(date: &String) -> bool {
 }
 
 fn main() {
-    if !Path::new("./config.txt").exists() {
-        let mut file = File::create("config.txt").unwrap();
+
+    //Check for rsc folder
+    if !Path::new("./rsc").is_dir() {
+        create_dir("./rsc").unwrap();
+    }
+
+    //Check for config
+    if !Path::new("././config.txt").exists() {
+        let mut file = File::create("././config.txt").unwrap();
         file.write_all(b"C:\\Program Files\\Microsoft Office\\root\\Office16\\excel.exe\n").unwrap();
-        file.write_all(b"C:\\Program Files\\sheet-prepper\\Tubes.xlsx\n").unwrap();
+        file.write_all(b"C:\\Program Files\\sheet-prepper\\rsc\\Tubes.xlsx\n").unwrap();
         file.write_all(b"C\n").unwrap();
         file.write_all(b"E\n").unwrap();
         file.write_all(b"A\n").unwrap();
@@ -272,7 +267,7 @@ fn main() {
     }
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet, submit, open, read, write])
+        .invoke_handler(tauri::generate_handler![submit, open, read, write])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

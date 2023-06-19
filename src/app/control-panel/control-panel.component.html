@@ -14,7 +14,7 @@
   <div class="relative">
     <label for="start-input" class="block">Start Position</label>
     <div class="flex items-center bg-[#0f0f0f98] rounded-md" >
-      <input id="start-input" type="number" class="bg-transparent w-full h-full shadow-none border-none" [value]="start" (input)="updateStart()">
+      <input id="start-input" type="number" class="bg-transparent w-full h-full shadow-none border-none" [(ngModel)]="start" (input)="updateStart()">
       <button class="p-2 m-1" (click)="showModal()">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 3h18v18H3zM21 9H3M21 15H3M12 3v18"/>

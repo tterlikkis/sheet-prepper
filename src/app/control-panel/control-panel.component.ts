@@ -34,6 +34,9 @@ export class ControlPanelComponent {
     }
 
     updateStart = () => {
+        if (!this.start) {
+            this.start = 1;
+        }
         this.startEvent.emit(this.start);
     }
 

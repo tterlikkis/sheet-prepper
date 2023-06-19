@@ -1,5 +1,6 @@
-import { Component } from "@angular/core";
+import { Component, ViewChild } from "@angular/core";
 import { invoke } from "@tauri-apps/api/tauri";
+import { ControlPanelComponent } from "./control-panel/control-panel.component";
 import { DateData } from "./shared/datetype";
 import { SettingsData } from "./shared/settingstype";
 
@@ -50,8 +51,10 @@ export class AppComponent {
     this.dates.splice(event.index, 1, event.data);
   }
 
+  @ViewChild("control-panel") controlPanel!: ControlPanelComponent;
   updateStart = (start: number) => {
     this.setStart(start);
+    this.controlPanel.start = start;
   }
 
   submit = () => {
