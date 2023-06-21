@@ -177,18 +177,22 @@ fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
             row += 1;
             start += 1;
 
-            if doubles.contains(&tube) {
+            // Count number of times double appears, some samples need more than one double tube
+            let mut count = doubles.iter().filter(|&t| t == &tube).count();
+            while count > 0 {
                 worksheet.write(row, 0, start).unwrap();
                 worksheet.write(row, 1, &double_ch).unwrap();
                 worksheet.write(row, 2, if tube < 1000 {format!(" {}", tube)} else {tube.to_string()}).unwrap();
                 worksheet.write_with_format(row, 3, &datedata.date, &date_format).unwrap();
                 row += 1;
                 start += 1;
+                count -= 1;
             }
         }
     }
 
-    let result = workbook.save(settings.file);
+    // let result = workbook.save(settings.file);
+    let result = workbook.save("./Tubes.xlsx");
 
     if result.is_err() {
         return Err("Please close Tubes file".to_string());
