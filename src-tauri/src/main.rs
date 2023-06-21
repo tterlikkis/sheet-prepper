@@ -10,6 +10,9 @@ use serde::{Serialize, Deserialize};
 use tauri::regex::Regex;
 use rust_xlsxwriter::{Format, Workbook};
 
+const DEBUG: bool = false;
+const DEBUG_PATH: &str = "./Tubes.xlsx";
+
 #[derive(Serialize, Deserialize, Debug)]
 struct DateData {
     date: String,
@@ -93,7 +96,8 @@ fn open() -> Result<(), String> {
 
     let settings = read().unwrap();
 
-    let output = Command::new(settings.path).arg(settings.file).spawn();
+    let output = if DEBUG { Command::new(settings.path).arg(DEBUG_PATH).spawn() } 
+        else { Command::new(settings.path).arg(settings.file).spawn() };
 
     if output.is_err() {
         return Err("Error opening Excel, make sure to set the Excel path in settings.".to_string());
@@ -191,8 +195,7 @@ fn submit(mut start: i32, data: Vec<DateData>) -> Result<(), String> {
         }
     }
 
-    // let result = workbook.save(settings.file);
-    let result = workbook.save("./Tubes.xlsx");
+    let result = if DEBUG { workbook.save(DEBUG_PATH) } else { workbook.save(settings.file) };
 
     if result.is_err() {
         return Err("Please close Tubes file".to_string());
