@@ -1,10 +1,5 @@
 # Sheet Prepper
 
-## Description
-
-A styled form to convert sample data to be compatible with TubeWriter360 software.  
-Requires a Microsoft Excel installation.
-
 ## Dependencies
 
 Rust 1.69    - https://www.rust-lang.org/tools/install  
